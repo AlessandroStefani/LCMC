@@ -59,25 +59,49 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitTimesDiv(TimesDivContext c) { //TODO
 		if (print) printVarAndProdName(c);
+
+		//bisogna distinguere s fare un times o div node i guess, ma come?
 		Node n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.TIMES().getSymbol().getLine());		// setLine added
+		n.setLine(c.TIMES().getSymbol().getLine());
         return n;		
 	}
 
 	@Override
 	public Node visitPlusMinus(PlusMinusContext c) { //TODO
 		if (print) printVarAndProdName(c);
+
+		//bisogna distinguere s fare un plus o minus node i huess, ma come?
 		Node n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.PLUS().getSymbol().getLine());	
+		n.setLine(c.PLUS().getSymbol().getLine());
         return n;		
 	}
 
 	@Override
 	public Node visitComp(CompContext c) { //TODO
 		if (print) printVarAndProdName(c);
+
+		//bisogna distinguere s fare un eq,ge o le node i guess, ma come?
 		Node n = new EqualNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.EQ().getSymbol().getLine());		
+		n.setLine(c.EQ().getSymbol().getLine());
         return n;		
+	}
+
+	@Override
+	public Node visitAndOr(AndOrContext c) { //TODO
+		if (print) printVarAndProdName(c);
+
+		//bisogna distinguere s fare un and o or node i guess, ma come?
+		Node n = new AndNode(visit(c.exp(0)), visit(c.exp(1)));
+		n.setLine(c.AND().getSymbol().getLine());
+		return n;
+	}
+
+	@Override
+	public Node visitNot(NotContext c) { //TODO
+		if (print) printVarAndProdName(c);
+		Node n = new NotNode( visit(c.exp()) ); //sarà corretto?
+		n.setLine(c.NOT().getSymbol().getLine());
+		return n;
 	}
 
 	@Override
