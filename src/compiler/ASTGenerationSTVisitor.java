@@ -57,33 +57,49 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	@Override
-	public Node visitTimesDiv(TimesDivContext c) { //TODO
+	public Node visitTimesDiv(TimesDivContext c) {
 		if (print) printVarAndProdName(c);
-
-		//bisogna distinguere s fare un times o div node i guess, ma come?
-		Node n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.TIMES().getSymbol().getLine());
+		Node n;
+		if (c.TIMES()!=null) {
+			n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.TIMES().getSymbol().getLine());
+		} else {
+			n = new DivNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.DIV().getSymbol().getLine());
+		}
         return n;		
 	}
 
 	@Override
-	public Node visitPlusMinus(PlusMinusContext c) { //TODO
+	public Node visitPlusMinus(PlusMinusContext c) {
 		if (print) printVarAndProdName(c);
-
-		//bisogna distinguere s fare un plus o minus node i huess, ma come?
-		Node n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.PLUS().getSymbol().getLine());
+		Node n;
+		if (c.PLUS()!=null) {
+			n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.PLUS().getSymbol().getLine());
+		} else {
+			n = new MinusNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.MINUS().getSymbol().getLine());
+		}
         return n;		
 	}
 
 	@Override
-	public Node visitComp(CompContext c) { //TODO
+	public Node visitComp(CompContext c) {
 		if (print) printVarAndProdName(c);
+		Node n;
+		if (c.EQ()!=null) {
+			n = new EqualNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.EQ().getSymbol().getLine());
+		} else if (c.LE()!=null) {
+			n = new LessEqualNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.LE().getSymbol().getLine());
+		} else {
+			n = new GreaterEqualNode(visit(c.exp(0)), visit(c.exp(1)));
+			n.setLine(c.GE().getSymbol().getLine());
+		}
 
-		//bisogna distinguere s fare un eq,ge o le node i guess, ma come?
-		Node n = new EqualNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.EQ().getSymbol().getLine());
-        return n;		
+		return n;
 	}
 
 	@Override
