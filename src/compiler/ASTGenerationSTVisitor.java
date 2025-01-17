@@ -103,19 +103,24 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 	@Override
-	public Node visitAndOr(AndOrContext c) { //TODO
+	public Node visitAndOr(AndOrContext c) {
 		if (print) printVarAndProdName(c);
 
-		//bisogna distinguere s fare un and o or node i guess, ma come?
-		Node n = new AndNode(visit(c.exp(0)), visit(c.exp(1)));
-		n.setLine(c.AND().getSymbol().getLine());
-		return n;
+		if (c.AND()!=null) {
+			Node andNode = new AndNode(this.visit(c.exp(0)), this.visit(c.exp(1)));
+			andNode.setLine(c.AND().getSymbol().getLine());
+			return andNode;
+		} else {
+			Node orNode = new OrNode(this.visit(c.exp(0)), this.visit(c.exp(1)));
+			orNode.setLine(c.OR().getSymbol().getLine());
+			return orNode;
+		}
 	}
 
 	@Override
-	public Node visitNot(NotContext c) { //TODO
+	public Node visitNot(NotContext c) {
 		if (print) printVarAndProdName(c);
-		Node n = new NotNode( visit(c.exp()) ); //sarà corretto?
+		Node n = new NotNode( visit(c.exp()) );
 		n.setLine(c.NOT().getSymbol().getLine());
 		return n;
 	}
