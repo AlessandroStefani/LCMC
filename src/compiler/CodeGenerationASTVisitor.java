@@ -148,18 +148,42 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	}
 
 	@Override
-	public String visitNode(AndNode n) { //TODO
+	public String visitNode(AndNode n) {
 		if (print) printNode(n);
+		String falseLabel = freshLabel();
+		String trueLabel = freshLabel();
 		return nlJoin(
-
+			visit(n.left),	//visito left
+				"push " + 0,			//compara con 0
+				"beq " + falseLabel, // è falso?
+				visit(n.right),		//visito right
+				"push " + 0,			//compara con 0
+				"beq " + falseLabel, //è falso? salta al falselabel
+				"push " + 1,			//tutto ok
+				"b " + trueLabel,
+				falseLabel + ":",
+				"push " + 0,			//falso
+				trueLabel + ":"
 		);
 	}
 
 	@Override
-	public String visitNode(OrNode n) { //TODO
+	public String visitNode(OrNode n) {
 		if (print) printNode(n);
+		String falseLabel = freshLabel();
+		String trueLabel = freshLabel();
 		return nlJoin(
-
+			visit(n.left),	//visito right
+				"push " + 1,			//true?
+				"beq " + trueLabel,	//se si, salto e finisco senno continuo
+				visit(n.right),		//stessa roba di sopra
+				"push " + 1,
+				"beq " + trueLabel,	//tutti falsi
+				"push " + 0,			// carico falso
+				"b " + falseLabel,	//e salto al output falso
+				trueLabel + ":",	//branch true
+				"push " + 1,			//carico 1
+				falseLabel + ":"
 		);
 	}
 
