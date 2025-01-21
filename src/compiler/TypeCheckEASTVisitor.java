@@ -237,4 +237,16 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			throw new TypeException("Non Boolean in AND operation, line:",n.getLine());
 		return new BoolTypeNode();
 	}
+
+	@Override
+	public TypeNode visitNode(EmptyNode n) throws TypeException {
+		if (print) printNode(n);
+		return new EmptyTypeNode();
+	}
+
+	@Override
+	public TypeNode visitNode(EmptyTypeNode n) throws TypeException {
+		if (print) printNode(n);
+		return null;
+	}
 }

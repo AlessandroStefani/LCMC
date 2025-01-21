@@ -233,19 +233,25 @@ public class AST {
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
 
-	public static class EmptyNode extends Node {//TODO
+	/**
+	 * valore null
+	 */
+	public static class EmptyNode extends Node {//OK
 
 		@Override
 		public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-			return null;
+			return visitor.visitNode(this);
 		}
 	}
 
-	public static class EmptyTypeNode extends TypeNode {//TODO
+	/**
+	 * tipo null
+	 */
+	public static class EmptyTypeNode extends TypeNode {//OK
 
 		@Override
 		public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-			return null;
+			return visitor.visitNode(this);
 		}
 	}
 
