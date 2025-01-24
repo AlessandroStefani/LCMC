@@ -379,7 +379,7 @@ public class AST {
     public static class FieldNode extends DecNode {
 
         final String id;
-		int offset;
+		int offset = -1; //se non si eredita, -1. altrimenti settato in base a classtypenode
 
         FieldNode(String i, TypeNode t) {
             id = i;
@@ -403,7 +403,7 @@ public class AST {
         final List<DecNode> declist;
         final Node exp;
 		String label;//etichetta per indirizzo
-		int offset = 0;
+		int offset = 0;//se non si eredita, 0. altrimenti settato in base a classtypenode
 
         MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
             id = i;
