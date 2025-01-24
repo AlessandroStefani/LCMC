@@ -210,4 +210,27 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 		printNode(n);
 		return null;
 	}
+
+	@Override
+	public Void visitNode(FieldNode node) throws VoidException {
+		this.printNode(node, node.id + " Offset: " + node.offset);
+		this.visit(node.getType());
+		return null;
+	}
+
+	@Override
+	public Void visitNode(MethodNode n) throws VoidException {
+		printNode(n,n.id + " Offset: " + n.offset);
+		visit(n.retType);
+		for (ParNode par : n.parlist) visit(par);
+		for (Node dec : n.declist) visit(dec);
+		visit(n.exp);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(RefTypeNode n) throws VoidException {
+		printNode(n, n.id);
+		return null;
+	}
 }
