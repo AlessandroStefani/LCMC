@@ -232,4 +232,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (this.print) this.printVarAndProdName(ctx);
 		return new EmptyNode();
 	}
+
+
 }

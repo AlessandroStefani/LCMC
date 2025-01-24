@@ -236,7 +236,7 @@ public class AST {
 	/**
 	 * valore null
 	 */
-	public static class EmptyNode extends Node {//OK
+	public static class EmptyNode extends Node {//OK??
 
 		@Override
 		public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
@@ -247,12 +247,45 @@ public class AST {
 	/**
 	 * tipo null
 	 */
-	public static class EmptyTypeNode extends TypeNode {//OK
+	public static class EmptyTypeNode extends TypeNode {//OK??
 
 		@Override
 		public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);
 		}
+	}
+
+	public static class FieldNode extends DecNode {
+
+		final String id;
+		FieldNode(String i, TypeNode t) {id = i; type = t;}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+
+	}
+
+	/**
+	 * MethodNode
+	 */
+	public static class MethodNode extends DecNode {
+		final String id;
+		final TypeNode retType;
+		final List<ParNode> parlist;
+		final List<DecNode> declist;
+		final Node exp;
+
+		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
+			id=i;
+			retType=rt;
+			parlist=Collections.unmodifiableList(pl);
+			declist=Collections.unmodifiableList(dl);
+			exp=e;
+		}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
+
 	}
 
 }
