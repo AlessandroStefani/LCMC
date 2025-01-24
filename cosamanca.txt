@@ -1,2 +1,2 @@
-methodNode: symboltable, codegeneration. AST: ok,typecheck: ok.
+methodNode: symboltable (manca), codegeneration(manca). AST: ok,typecheck: ok.
 fieldNode: tecnicamente ok, penso di non essermi perso nulla.
