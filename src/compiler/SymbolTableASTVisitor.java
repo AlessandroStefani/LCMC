@@ -224,15 +224,39 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		return null;
 	}
 
+	/**
+	 *
+	 * @param n EmptyTypeNode
+	 * @return
+	 * @throws VoidException
+	 */
 	@Override
 	public Void visitNode(EmptyTypeNode n) throws VoidException {
 		if (print) printNode(n);
 		return null;
 	}
 
+	/**
+	 *
+	 * @param n EmptyNode
+	 * @return
+	 * @throws VoidException
+	 */
 	@Override
 	public Void visitNode(EmptyNode n) throws VoidException {
 		if (print) printNode(n);
+		return null;
+	}
+
+	/**
+	 *
+	 * @param node FieldNode
+	 * @return
+	 * @throws VoidException
+	 */
+	@Override
+	public Void visitNode(FieldNode node) throws VoidException {
+		if (print) printNode(node);
 		return null;
 	}
 }
