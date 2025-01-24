@@ -1,1 +1,2 @@
 methodNode: symboltable, codegeneration. AST: ok,typecheck: ok.
+fieldNode: tecnicamente ok, penso di non essermi perso nulla.
