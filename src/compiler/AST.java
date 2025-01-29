@@ -421,7 +421,7 @@ public class AST {
     }
 
     /**
-     *
+     * contiene l'ID della classe come campo
      */
     public static class RefTypeNode extends TypeNode {
         final String id;
@@ -429,6 +429,30 @@ public class AST {
         RefTypeNode(String id) {
             this.id = id;
         }
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return visitor.visitNode(this);
+        }
+    }
+
+    /**
+     *
+     */
+    public static class ClassNode extends TypeNode {
+        final String id;
+        final List<MethodNode> methods;
+        final List<FieldNode> fields;
+        final String superId; //nulla se non c'è
+        //final STentry entry; //?
+
+        public ClassNode(String id, List<MethodNode> methods, List<FieldNode> fields, String superId) {
+            this.id = id;
+            this.methods = Collections.unmodifiableList(methods);
+            this.fields = Collections.unmodifiableList(fields);
+            this.superId = superId;
+        }
+
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
