@@ -245,7 +245,20 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	 */
 	@Override
 	public Node visitCldec(CldecContext ctx) {
-		return super.visitCldec(ctx);
+		if (print) printVarAndProdName(ctx);
+		//nome
+		String name = ctx.ID(0).getText();
+		//superclasse, se non c'è null
+		String superClass = Objects.isNull(ctx.EXTENDS()) ? null:  ctx.ID(1).getText();
+
+		if (superClass!=null) {
+
+		}
+
+		List<FieldNode> fields = new ArrayList<>();
+
+
+		return null;
 	}
 
 	/**
