@@ -234,4 +234,68 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 
+	///
+	///
+	///
+
+	/**
+	 * CLASS
+	 * @param ctx the parse tree
+	 * @return
+	 */
+	@Override
+	public Node visitCldec(CldecContext ctx) {
+		return super.visitCldec(ctx);
+	}
+
+	/**
+	 * Methods
+	 * @param ctx the parse tree
+	 * @return a MethodNode
+	 */
+	@Override
+	public Node visitMethdec(MethdecContext ctx) {
+		if (print) printVarAndProdName(ctx);
+
+		List<ParNode> parList = new ArrayList<>();
+		List<DecNode> decList = new ArrayList<>();
+
+		for (int i = 1; i < ctx.ID().size(); i++) {
+			ParNode param = new ParNode(ctx.ID(i).getText(), (TypeNode) visit(ctx.type(i)));
+			param.setLine(ctx.ID(i).getSymbol().getLine());
+			parList.add(param);
+		}
+
+		for (DecContext dec : ctx.dec()) decList.add((DecNode) visit(dec));
+
+		Node n = null;
+		if (!ctx.ID().isEmpty()) {
+			n = new MethodNode(
+					ctx.ID(0).getText(),
+					(TypeNode) visit(ctx.type(0)),
+					parList,
+					decList,
+					visit(ctx.exp())
+			);
+
+			n.setLine(ctx.FUN().getSymbol().getLine());
+		}
+		return n;
+
+	}
+
+	@Override
+	public Node visitNew(NewContext ctx) {
+		return super.visitNew(ctx);
+	}
+
+	@Override
+	public Node visitDotCall(DotCallContext ctx) {
+		return super.visitDotCall(ctx);
+	}
+
+	@Override
+	public Node visitIdType(IdTypeContext ctx) {
+		return super.visitIdType(ctx);
+	}
 }
