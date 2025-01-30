@@ -272,4 +272,27 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			throw new TypeException("Wrong return type for method " + n.id,n.getLine());
 		return null;
 	}
+
+	@Override
+	public TypeNode visitNode(ClassNode n) throws TypeException {
+		if (print) printNode(n);
+		boolean hasSubClass = n.superId != null;
+		if (!hasSubClass) {
+			for (Node method : n.methods) {
+				try {
+					visit(method);
+				} catch (IncomplException e) {
+				} catch (TypeException e) {
+					System.out.println("Type checking error in a object method declaration: " + e.text);
+				}
+			}
+		} else {
+			//ha sottoclasse, serve mappa in TypeRels
+
+		}
+
+
+
+		return null;
+	}
 }
