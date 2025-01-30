@@ -12,6 +12,15 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	private int decOffset=-2; // counter for offset of local declarations at current nesting level 
 	int stErrors=0;
 
+
+	private static class VirtualTable extends HashMap<String, STentry> {//???
+	}
+
+	/**
+	 * La ClassTable è usata per salvare le virtual table delle classi.
+	 */
+	private final Map<String, VirtualTable> classTable = new HashMap<>();
+
 	SymbolTableASTVisitor() {}
 	SymbolTableASTVisitor(boolean debug) {super(debug);} // enables print for debugging
 
@@ -258,5 +267,38 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	public Void visitNode(FieldNode node) throws VoidException {
 		if (print) printNode(node);
 		return null;
+	}
+
+	/**
+	 *
+	 * @param n
+	 * @return
+	 * @throws VoidException
+	 */
+	@Override
+	public Void visitNode(ClassNode n) throws VoidException {
+		return super.visitNode(n);
+	}
+
+	/**
+	 *
+	 * @param n
+	 * @return
+	 * @throws VoidException
+	 */
+	@Override
+	public Void visitNode(MethodNode n) throws VoidException {
+		return super.visitNode(n);
+	}
+
+	/**
+	 *
+	 * @param n
+	 * @return
+	 * @throws VoidException
+	 */
+	@Override
+	public Void visitNode(RefTypeNode n) throws VoidException {
+		return super.visitNode(n);
 	}
 }
