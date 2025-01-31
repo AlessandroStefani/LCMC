@@ -460,4 +460,41 @@ public class AST {
         }
     }
 
+    public static class ClassTypeNode extends TypeNode {
+        final List<TypeNode> allFields;
+        final List<ArrowTypeNode> allMethods;
+
+        //se non si eredita
+        ClassTypeNode(final List<TypeNode> fields, final List<ArrowTypeNode> methods) {
+            this.allFields = new ArrayList<>(fields);
+            this.allMethods = new ArrayList<>(methods);
+        }
+
+        //se si eredita
+        ClassTypeNode(final ClassTypeNode parent) {
+            this(parent.allFields, parent.allMethods);
+        }
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
+    public static class NewNode extends TypeNode {
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
+    public static class ClassCallNode extends TypeNode {
+
+        @Override
+        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
+            return null;
+        }
+    }
+
 }
