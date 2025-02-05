@@ -1,6 +1,7 @@
 package compiler;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -46,7 +47,19 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	public Node visitLetInProg(LetInProgContext c) {
 		if (print) printVarAndProdName(c);
 		List<DecNode> declist = new ArrayList<>();
-		for (DecContext dec : c.dec()) declist.add((DecNode) visit(dec));
+
+		//Object oriented
+
+		List<DecNode>  classList = new ArrayList<>();
+		for (var x : c.cldec()) classList.add((DecNode) visit(x));
+
+		List<DecNode> varlist = new ArrayList<>();
+		for (DecContext dec : c.dec()) varlist.add((DecNode) visit(dec));
+
+
+		declist.addAll(classList);
+		declist.addAll(varlist);
+
 		return new ProgLetInNode(declist, visit(c.exp()));
 	}
 
@@ -257,14 +270,14 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (superClass!=null) {
 			//todo
 		} else {
-			for (var x : ctx.methdec()) methods.add((MethodNode) visitMethdec(x));
 			for (int i = 1; i < ctx.ID().size(); i++){
 				String field = ctx.ID(i).getText();
-				TypeNode type = (TypeNode) visit(ctx.type(i));
+				TypeNode type = (TypeNode) visit(ctx.type(i-1));
 				FieldNode f = new FieldNode(field, type);
 				f.setLine(ctx.ID(i).getSymbol().getLine());
 				fields.add(f);
 			}
+			for (var x : ctx.methdec()) methods.add((MethodNode) visit(x));
 		}
 
 		Node n = new ClassNode(name, methods, fields, superClass);
@@ -355,4 +368,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		node.setLine(ctx.ID().getSymbol().getLine());
 		return node;
 	}
+
+
 }
