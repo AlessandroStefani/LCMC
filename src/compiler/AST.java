@@ -481,7 +481,16 @@ public class AST {
         }
     }
 
+
     public static class NewNode extends Node {
+        final String className;//nome classe
+        final List<Node> argumentList;//argomenti del costruttore
+        STentry classEntry;//potrebbe essere utile? ci si mette la STentry della classe
+
+        NewNode(String id, final List<Node> args) {
+            this.className = id;
+            this.argumentList = Collections.unmodifiableList(args);
+        }
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
@@ -489,7 +498,20 @@ public class AST {
         }
     }
 
-    public static class ClassCallNode extends Node {//non ho capito
+    public static class ClassCallNode extends Node {
+        final String classId;//classe
+        final String methodId;//metodo
+        final List<Node> argumentList;//argomenti del metodo
+        STentry classEntry;//potrebbe essere utile? ci si mette la STentry della classe
+        STentry methodEntry;//potrebbe essere utile? ci si mette la STentry del metodo
+        int nestingLevel;
+
+        ClassCallNode(final String classId, final String methodId, final List<Node> args) {
+            this.classId = classId;
+            this.methodId = methodId;
+            this.argumentList = Collections.unmodifiableList(args);
+            this.nestingLevel = 0;
+        }
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
