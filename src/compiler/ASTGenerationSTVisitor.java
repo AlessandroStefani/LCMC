@@ -267,8 +267,16 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<FieldNode> fields = new ArrayList<>();
 		List<MethodNode> methods = new ArrayList<>();
 
+		//il codice è da mettere a posto ma funziona
 		if (superClass!=null) {
-			//todo
+			for (int i = 2; i < ctx.ID().size(); i++){
+				String field = ctx.ID(i).getText();
+				TypeNode type = (TypeNode) visit(ctx.type(i-2));
+				FieldNode f = new FieldNode(field, type);
+				f.setLine(ctx.ID(i).getSymbol().getLine());
+				fields.add(f);
+			}
+			for (var x : ctx.methdec()) methods.add((MethodNode) visit(x));
 		} else {
 			for (int i = 1; i < ctx.ID().size(); i++){
 				String field = ctx.ID(i).getText();
