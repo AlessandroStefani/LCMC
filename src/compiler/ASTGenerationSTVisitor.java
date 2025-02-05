@@ -253,9 +253,14 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 
 		if (superClass!=null) {
 
+		} else {
+			List<FieldNode> fields = new ArrayList<>();
+			List<MethodNode> methods = new ArrayList<>();
+
+
 		}
 
-		List<FieldNode> fields = new ArrayList<>();
+
 
 
 		return null;
@@ -309,6 +314,10 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 
 	@Override
 	public Node visitIdType(IdTypeContext ctx) {
-		return super.visitIdType(ctx);
+		if (this.print) this.printVarAndProdName(ctx);
+		final String id = ctx.ID().getText();
+		final RefTypeNode node = new RefTypeNode(id);
+		node.setLine(ctx.ID().getSymbol().getLine());
+		return node;
 	}
 }
