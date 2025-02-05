@@ -241,4 +241,29 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 		for (Node node : n.methods) visit(node);
 		return null;
 	}
+
+	@Override
+	public Void visitNode(ClassCallNode node) throws VoidException {
+		this.printNode(node, node.classId + "." + node.methodId + " at nestinglevel: " + node.nestingLevel);
+		this.visit(node.classEntry);
+		this.visit(node.methodEntry);
+		for (Node argument : node.argumentList) this.visit(argument);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(NewNode n) throws VoidException {
+		this.printNode(n, n.className + " at nestinglevel: " + n.classEntry.nl);
+		for (Node argument : n.argumentList) this.visit(argument);
+		this.visit(n.classEntry);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(ClassTypeNode n) throws VoidException {
+		printNode(n);
+		for (Node field : n.allFields) this.visit(field);
+		for (Node method : n.allMethods) this.visit(method);
+		return null;
+	}
 }
