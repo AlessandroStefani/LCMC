@@ -51,7 +51,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		//Object oriented
 
 		List<DecNode>  classList = new ArrayList<>();
-		for (var x : c.cldec()) classList.add((DecNode) visit(x));
+		for (CldecContext x : c.cldec()) classList.add((DecNode) visit(x));
 
 		List<DecNode> varlist = new ArrayList<>();
 		for (DecContext dec : c.dec()) varlist.add((DecNode) visit(dec));
