@@ -13,14 +13,14 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	int stErrors=0;
 
 
-	private static class VirtualTable extends HashMap<String, STentry> {//???
-	}
+//	private static class VirtualTable extends HashMap<String, STentry> {//???
+//	} non credo serva, le creiamo dentro visit classnode
 
 	/**
 	 * La ClassTable è usata per salvare le virtual table delle classi.
 	 */
-	private final Map<String, VirtualTable> classTable = new HashMap<>();
-
+	private final Map<String, HashMap<String, STentry>> classTable = new HashMap<>(); //dove HashMap<String, STentry> è la VirtualTable della classe con id String
+																						//la sfrutteremo quando faremo le Call
 	SymbolTableASTVisitor() {}
 	SymbolTableASTVisitor(boolean debug) {super(debug);} // enables print for debugging
 
@@ -277,7 +277,43 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	 */
 	@Override
 	public Void visitNode(ClassNode n) throws VoidException {
-		return super.visitNode(n);
+		if (print) printNode(n);
+
+		Map<String, STentry> hm = symTable.get(nestingLevel);
+
+		//estrapolo i tipi dei campi
+		List<TypeNode> typeFields = new ArrayList<>();
+		for (FieldNode field : n.fields) typeFields.add(field.getType());
+		//estrapolo l'arrowTypeNode di ogni metodo
+		List<ArrowTypeNode> methArrowTypes = new ArrayList<>();
+		List<TypeNode> methodParsTypes = new ArrayList<>();
+		for (MethodNode method : n.methods) {
+			for (ParNode par : method.parlist) methodParsTypes.add(par.getType());
+			methArrowTypes.add(new ArrowTypeNode(methodParsTypes,method.retType));
+			methodParsTypes.clear();
+		}
+
+		STentry entry = new STentry(nestingLevel, new ClassTypeNode(typeFields,methArrowTypes),decOffset--);
+		//inserimento di ID nella symtable
+		if (hm.put(n.id, entry) != null) {
+			System.out.println("Class id " + n.id + " at line "+ n.getLine() +" already declared");
+			stErrors++;
+		}
+
+//		//creazione virtual table
+//		Map<String, STentry> vt; //TODO
+//		for(FieldNode field : n.fields) {
+//			vt.put(n.id, new STentry());
+//		}
+//		for(MethodNode method : n.methods) {
+//
+//		}
+//
+//		//inserimento ID nella classTable
+//		classTable.put(n.id, vt);
+
+
+		return null;
 	}
 
 	/**
