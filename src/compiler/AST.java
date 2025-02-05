@@ -439,7 +439,7 @@ public class AST {
     /**
      *
      */
-    public static class ClassNode extends TypeNode {
+    public static class ClassNode extends DecNode {
         final String id;
         final List<MethodNode> methods;
         final List<FieldNode> fields;
@@ -481,7 +481,7 @@ public class AST {
         }
     }
 
-    public static class NewNode extends TypeNode {
+    public static class NewNode extends Node {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
@@ -489,7 +489,7 @@ public class AST {
         }
     }
 
-    public static class ClassCallNode extends TypeNode {//non ho capito
+    public static class ClassCallNode extends Node {//non ho capito
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
