@@ -255,7 +255,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<MethodNode> methods = new ArrayList<>();
 
 		if (superClass!=null) {
-
+			//todo
 		} else {
 			for (var x : ctx.methdec()) methods.add((MethodNode) visitMethdec(x));
 			for (int i = 1; i < ctx.ID().size(); i++){
