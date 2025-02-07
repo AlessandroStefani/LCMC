@@ -12,10 +12,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	private int decOffset=-2; // counter for offset of local declarations at current nesting level 
 	int stErrors=0;
 
-
-//	private static class VirtualTable extends HashMap<String, STentry> {//???
-//	} non credo serva, le creiamo dentro visit classnode
-
 	/**
 	 * La ClassTable è usata per salvare le virtual table delle classi.
 	 */
@@ -38,6 +34,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		Map<String, STentry> hm = new HashMap<>();
 		symTable.add(hm);
 	    for (Node dec : n.declist) visit(dec);
+		//se n.exp non c'è qui si rompe
 		visit(n.exp);
 		symTable.remove(0);
 		return null;
@@ -398,6 +395,36 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	@Override
 	public Void visitNode(ClassCallNode n) {
 		if (print) printNode(n);
+		STentry entry = stLookup(n.classId);
+		if (entry == null) {
+			System.out.println("Object id " + n.classId + " at line "+ n.getLine() + " not declared");
+			stErrors++;
+		} else {
+			n.classEntry = entry;
+			n.nestingLevel = nestingLevel;
+			//fino a qui cerco ID1 come in IdNode e CallNode (discesa livelli)
+
+			//da qui cerdo ID2
+			//se ID1 è RefTypeNode
+			if (entry.type instanceof RefTypeNode ref){
+				//cerco ID2 nella virtualTable
+				Map<String, STentry> hm = classTable.get(ref.id);
+				STentry methodEntry = hm.get(n.methodId);
+				//se non lo trovo errore
+				if (methodEntry == null) {
+					System.out.println("Object id " + n.classId + " at line " + n.getLine() + " has no method " + n.methodId);
+					this.stErrors++;
+				} else {//se lo trovo lo assegno
+					n.methodEntry = methodEntry;
+				}
+			} else {//se ID1 non è reftype errore
+				System.out.println("Object id " + n.classId + " at line " + n.getLine() + " is not a RefTypeNode");
+				this.stErrors++;
+			}
+
+		}
+
+		for (Node arg : n.argumentList) visit(arg);
 		return null;
 	}
 
