@@ -201,7 +201,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 
 	@Override
 	public Void visitNode(EmptyNode n) {
-		printNode(n);
+		printNode(n, "null");
 		return null;
 	}
 
@@ -236,7 +236,7 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void,VoidException> {
 
 	@Override
 	public Void visitNode(ClassNode n) throws VoidException {
-		printNode(n, n.superId!=null? " Extends " + n.id : n.id);
+		printNode(n, n.superId!=null? n.id + " Extends " + n.superId : n.id);
 		for (Node node : n.fields) visit(node);
 		for (Node node : n.methods) visit(node);
 		return null;
