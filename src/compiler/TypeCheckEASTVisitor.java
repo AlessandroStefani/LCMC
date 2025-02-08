@@ -296,8 +296,8 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 
 	@Override
 	public TypeNode visitNode(ClassCallNode n) throws TypeException {
-		if (print) printNode(n,n.classId);
-		TypeNode t = visit(n.classEntry);
+		if (print) printNode(n,n.classId + "." + n.methodId);
+		TypeNode t = visit(n.methodEntry);
 		if ( !(t instanceof ArrowTypeNode) )
 			throw new TypeException("Invocation of a non-function "+n.classId,n.getLine());
 		ArrowTypeNode at = (ArrowTypeNode) t;
@@ -310,15 +310,31 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	}
 
 	@Override
-	public TypeNode visitNode(RefTypeNode n) { //TODO
+	public TypeNode visitNode(ClassTypeNode n) { //TODO
 		if (print) printNode(n);
 		return null;
 	}
 
 	@Override
-	public TypeNode visitNode(NewNode n) { //TODO
-		if (print) printNode(n);
+	public TypeNode visitNode(RefTypeNode n) { //TODO
+		if (print) printNode(n, n.id);
 		return null;
+	}
+
+	@Override
+	public TypeNode visitNode(NewNode n) throws TypeException { //TODO
+		if (print) printNode(n, n.className);
+		TypeNode t = visit(n.classEntry);
+		if ( !(t instanceof ClassTypeNode) )
+			throw new TypeException("Invocation of a non-object " + n.className,n.getLine());
+		ClassTypeNode at = (ClassTypeNode) t;
+		if ( !(at.allFields.size() == n.argumentList.size()) )
+			throw new TypeException("Wrong number of parameters in the invocation of "+n.className,n.getLine());
+		for (int i = 0; i < n.argumentList.size(); i++)
+			if ( !(isSubtype(visit(n.argumentList.get(i)),at.allFields.get(i))) )
+				throw new TypeException("Wrong type for "+(i+1)+"-th parameter in the invocation of "+n.className,n.getLine());
+
+		return new RefTypeNode(n.className);
 	}
 
 
