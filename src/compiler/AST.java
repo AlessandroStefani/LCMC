@@ -444,7 +444,7 @@ public class AST {
         final List<MethodNode> methods;
         final List<FieldNode> fields;
         final String superId; //nulla se non c'è
-        //final STentry entry; //?
+        STentry superEntry;
 
         public ClassNode(String id, List<MethodNode> methods, List<FieldNode> fields, String superId) {
             this.id = id;

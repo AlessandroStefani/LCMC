@@ -347,22 +347,21 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
         List<String> dispatchTable = new ArrayList<>();
         if (n.superId != null) {
-            //eredito, todo
+            //eredito, in teoria dovrebbe essere cosi questo
+            final List<String> superDispatchTable = this.dispatchTables.get(-n.superEntry.offset - 2);
+            dispatchTable.addAll(superDispatchTable);
         } else {
             this.dispatchTables.add(dispatchTable);
-            for (var method : n.methods) {
-                visit(method);
+        }
 
-                //???
-                String methodLabel = method.label;
-                int methodOffset = method.offset;
-                //dispatchTable.set(methodOffset, methodLabel);
-                dispatchTable.add(methodLabel);
-                //???
-
-
-            }
-
+        for (var method : n.methods) {//bisogna gestire l'eredita dei metodi, todo, in teoria si usa la .set(?)
+            visit(method);
+            //???
+            String methodLabel = method.label;
+            int methodOffset = method.offset;
+            //dispatchTable.set(methodOffset, methodLabel);
+            dispatchTable.add(methodLabel);
+            //???
         }
 
         String code = null;
