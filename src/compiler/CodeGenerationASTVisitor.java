@@ -4,9 +4,14 @@ import compiler.AST.*;
 import compiler.lib.*;
 import compiler.exc.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static compiler.lib.FOOLlib.*;
 
 public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidException> {
+
+    private final List<List<String>> dispatchTables = new ArrayList<>();
 
     CodeGenerationASTVisitor() {
     }
@@ -338,7 +343,49 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     @Override
     public String visitNode(ClassNode n) throws VoidException {
-        return super.visitNode(n);
+        if (print) printNode(n);
+
+        List<String> dispatchTable = new ArrayList<>();
+        if (n.superId != null) {
+            //eredito, todo
+        } else {
+            this.dispatchTables.add(dispatchTable);
+            for (var method : n.methods) {
+                visit(method);
+
+                //???
+                String methodLabel = method.label;
+                int methodOffset = method.offset;
+                //dispatchTable.set(methodOffset, methodLabel);
+                dispatchTable.add(methodLabel);
+                //???
+
+
+            }
+
+        }
+
+        String code = null;
+
+        for (String label : dispatchTable){
+            code = nlJoin(
+                    code,       //memorizza l'etichetta del metodo nel'heap
+                    "push " + label,   //pusha l'etichetta del metodo
+                    "lhp ",            //carico heap pointer
+                    "sw ",             //memorizzo etichetta nel hp
+
+                    "push " + 1,       //pusho 1 (per incrementare hp)
+                    "lhp ",            //pusho heap pointer (per incrementare hp)
+                    "add ",            //incremento hp
+
+                    "shp "             //store hp
+            );
+        }
+
+        return nlJoin(
+                "lhp ",
+                code
+        );
     }
 
     @Override
