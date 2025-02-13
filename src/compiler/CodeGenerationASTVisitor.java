@@ -343,7 +343,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     @Override
     public String visitNode(ClassNode n) throws VoidException {
-        if (print) printNode(n);
+        if (print) printNode(n, n.superId!=null? n.id + " Extends " + n.superId : n.id);
 
         List<String> dispatchTable = new ArrayList<>();
         if (n.superId != null) {
@@ -357,10 +357,17 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         for (var method : n.methods) {//bisogna gestire l'eredita dei metodi, todo, in teoria si usa la .set(?)
             visit(method);
             //???
-            String methodLabel = method.label;
-            int methodOffset = method.offset;
+            String methodLabel = method.label; //me pare giusto
+            int methodOffset = method.offset; //me pare giusto
             //dispatchTable.set(methodOffset, methodLabel);
-            dispatchTable.add(methodLabel);
+            //dispatchTable.add(methodLabel);
+
+            //direi così
+            if (methodOffset>=dispatchTable.size()){
+                dispatchTable.add(methodOffset, methodLabel);
+            } else {
+                dispatchTable.set(methodOffset, methodLabel); //qui non si dovrebbe entrare mai se non sbaglio, ma per sicurezza c'è
+            }
             //???
         }
 
@@ -389,12 +396,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
     @Override
     public String visitNode(ClassCallNode node) throws VoidException {
-        return super.visitNode(node);
+        if (print) printNode(node, node.classId + "." + node.methodId);
+        return null;
     }
 
     @Override
     public String visitNode(NewNode n) throws VoidException {
-        return super.visitNode(n);
+        if (print) printNode(n, n.className);
+        return null;
     }
 
 
