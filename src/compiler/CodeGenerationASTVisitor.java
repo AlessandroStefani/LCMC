@@ -366,6 +366,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
             if (methodOffset>=dispatchTable.size()){
                 dispatchTable.add(methodOffset, methodLabel);
             } else {
+                //quando eredita il metodo va qui i guess
                 dispatchTable.set(methodOffset, methodLabel); //qui non si dovrebbe entrare mai se non sbaglio, ma per sicurezza c'è
             }
             //???
