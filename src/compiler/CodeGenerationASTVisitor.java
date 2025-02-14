@@ -260,6 +260,22 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String argCode = null, getAR = null;
         for (int i = n.arglist.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.arglist.get(i)));
         for (int i = 0; i < n.nl - n.entry.nl; i++) getAR = nlJoin(getAR, "lw");
+
+        if (n.entry.offset >= 0) {//TODO
+            return nlJoin(
+                    "lfp", // load Control Link (pointer to frame of function "id" caller)
+                    argCode, // generate code for argument expressions in reversed order
+                    "lfp", getAR, // retrieve address of frame containing "id" declaration
+                    // by following the static chain (of Access Links)
+                    "stm", // set $tm to popped value (with the aim of duplicating top of stack)
+                    "ltm", // load Access Link (pointer to frame of function "id" declaration)
+                    "ltm", // duplicate top of stack
+                    "push " + n.entry.offset, "add", // compute address of "id" declaration
+                    "lw", // load address of "id" function
+                    "js"  // jump to popped address (saving address of subsequent instruction in $ra)
+            );
+
+        }
         return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 argCode, // generate code for argument expressions in reversed order
@@ -367,6 +383,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 dispatchTable.add(methodOffset, methodLabel);
             } else {
                 //quando eredita il metodo va qui i guess
+                //avevo ipotizzato, ma probabilmente è risolvibile durante la gen della SymbolTable: una classe C1 con il metodo A estende una classe C2 con i metodi B(offset 0) e A (offset 1):
+                //  il metodo A della classe C1 potrebbe già avere offset 1, se è possibile fare un controllo sul nome dei metodi della superclass C2 e, trovando in entrambe i metodi A,
+                //  possiamo già inserire che C1 ha il metodo B in offset 0 (ereditato) e A in offset 1 (override), se C1 avesse anche un metodo M, questo avrebbe offset 2 se non sbaglio.
+                //  Il punto è che la questione è già risolta in SymbolTableASTVisitor, ma a questo punto sono un po' confuso sull superDispatchTable... boh scoprirò
                 dispatchTable.set(methodOffset, methodLabel); //qui non si dovrebbe entrare mai se non sbaglio, ma per sicurezza c'è
             }
             //???
@@ -396,15 +416,36 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(ClassCallNode node) throws VoidException {
-        if (print) printNode(node, node.classId + "." + node.methodId);
-        return null;
+    public String visitNode(ClassCallNode n) throws VoidException {
+        if (print) printNode(n, n.classId + "." + n.methodId);
+        String argCode = null, getAR = null;
+        for (int i = n.argumentList.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.argumentList.get(i)));
+        for (int i = 0; i < n.nestingLevel - n.methodEntry.nl; i++) getAR = nlJoin(getAR, "lw");
+        return nlJoin(  //TODO
+                "lfp", // load Control Link (pointer to frame of function "id" caller)
+                argCode, // generate code for argument expressions in reversed order
+                "lfp", getAR, // retrieve address of frame containing "id" declaration
+                // by following the static chain (of Access Links)
+                "stm", // set $tm to popped value (with the aim of duplicating top of stack)
+                "ltm", // load Access Link (pointer to frame of function "id" declaration)
+                "ltm", // duplicate top of stack
+                "push " + n.entry.offset, "add", // compute address of "id" declaration
+                "lw", // load address of "id" function
+                "js"  // jump to popped address (saving address of subsequent instruction in $ra)
+        );
     }
 
     @Override
-    public String visitNode(NewNode n) throws VoidException {
+    public String visitNode(NewNode n) throws VoidException { //TODO
         if (print) printNode(n, n.className);
-        return null;
+
+        String argCode = null, getAR = null;
+        for (int i = n.argumentList.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.argumentList.get(i)));
+        for (int i = 0; i < n. - n.classEntry.nl; i++) getAR = nlJoin(getAR, "lw");
+
+        return nlJoin(
+
+        );
     }
 
 
