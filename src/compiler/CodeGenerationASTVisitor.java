@@ -421,16 +421,43 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         if (print) printNode(n, n.classId + "." + n.methodId);
         String argCode = null, getAR = null;
         for (int i = n.argumentList.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.argumentList.get(i)));
-        for (int i = 0; i < n.nestingLevel - n.methodEntry.nl; i++) getAR = nlJoin(getAR, "lw");
+        for (int i = 0; i < n.nestingLevel - n.classEntry.nl; i++) getAR = nlJoin(getAR, "lw");
         return nlJoin(  //TODO
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 argCode, // generate code for argument expressions in reversed order
                 "lfp", getAR, // retrieve address of frame containing "id" declaration
                 // by following the static chain (of Access Links)
+
+
+
+                //recupera valore dell'ID1 (object pointer) dall'AR dove è
+                //dichiarato con meccanismo usuale di risalita catena statica
+                //(come per IdNode) e lo usa:
+                // per settare a tale valore l’Access Link mettendolo sullo stack e, duplicandolo,
+                //– per recuperare (usando l’offset di ID2 nella dispatch
+                //table riferita dal dispatch pointer dell’oggetto)
+                //l'indirizzo del metodo a cui saltare
+                "push " + n.classEntry.offset, "add", // compute address of "id" declaration
+                "lw", // load value of "id" variable
+
+                //forse cosi? non ho fatto tanto, ho solo copiato queste 2 righe da idnode
+
+
                 "stm", // set $tm to popped value (with the aim of duplicating top of stack)
                 "ltm", // load Access Link (pointer to frame of function "id" declaration)
                 "ltm", // duplicate top of stack
-                "push " + n.classEntry.offset, "add", // compute address of "id" declaration
+
+
+
+                
+                //"lw",  //io non so se ci va qui questo, ma se è la stessa logica di sopra, noi aggiungiamo con
+                //getAR delle lw che vengono messe, quindi forse ci va?
+
+                //qui ho cambiato con method perchè sarebbe il ID2 che è il metodo
+                "push " + n.methodEntry.offset,
+                "add", // compute address of "id" declaration
+
+
                 "lw", // load address of "id" function
                 "js"  // jump to popped address (saving address of subsequent instruction in $ra)
         );
@@ -441,6 +468,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         if (print) printNode(n, n.className);
 
         String argCode = null, getAR = null, argValue = null;
+
+
+        //nelle slide dice di metterli come vengono, sicuro di cosi? non sono al contrario?
         for (int i = n.argumentList.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.argumentList.get(i)));
         //for (int i = 0; i < n. - n.classEntry.nl; i++) getAR = nlJoin(getAR, "lw");
 
