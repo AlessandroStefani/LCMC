@@ -3,6 +3,7 @@ package compiler;
 import compiler.AST.*;
 import compiler.lib.*;
 import compiler.exc.*;
+import svm.ExecuteVM;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -429,22 +430,56 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "stm", // set $tm to popped value (with the aim of duplicating top of stack)
                 "ltm", // load Access Link (pointer to frame of function "id" declaration)
                 "ltm", // duplicate top of stack
-                "push " + n.entry.offset, "add", // compute address of "id" declaration
+                "push " + n.classEntry.offset, "add", // compute address of "id" declaration
                 "lw", // load address of "id" function
                 "js"  // jump to popped address (saving address of subsequent instruction in $ra)
         );
     }
 
     @Override
-    public String visitNode(NewNode n) throws VoidException { //TODO
+    public String visitNode(NewNode n) throws VoidException {
         if (print) printNode(n, n.className);
 
-        String argCode = null, getAR = null;
+        String argCode = null, getAR = null, argValue = null;
         for (int i = n.argumentList.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.argumentList.get(i)));
-        for (int i = 0; i < n. - n.classEntry.nl; i++) getAR = nlJoin(getAR, "lw");
+        //for (int i = 0; i < n. - n.classEntry.nl; i++) getAR = nlJoin(getAR, "lw");
+
+        //prende i valori degli argomenti, uno alla volta, dallo stack e li
+        //mette nello heap, incrementando $hp dopo ogni singola copia
+        for (var x : n.argumentList){
+            argValue = nlJoin(argValue,
+                    "lhp ",
+                    "sw ",
+                    "lhp ",
+                    "push " + 1,
+                    "add ",
+                    "shp ");
+        }
+
+        //scrive a indirizzo $hp il dispatch pointer recuperandolo da
+        //contenuto indirizzo MEMSIZE + offset classe ID
+
+        String dispatch = nlJoin(
+                "push " + (ExecuteVM.MEMSIZE + n.classEntry.offset)
+        );
+
+        //carica sullo stack il valore di $hp (indirizzo object pointer
+        //da ritornare) e incrementa $hp
+
+        String code = nlJoin( //boh
+//                "lhp ",
+//                "sw ",
+//                "lhp ",
+//                "push " + 1,
+//                "add ",
+//                "shp "
+        );
 
         return nlJoin(
-
+                argCode,
+                argValue,
+                dispatch,
+                code
         );
     }
 
