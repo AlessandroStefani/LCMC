@@ -1,17 +1,5 @@
 let
 
-
-
-
-
-    class Lists () {
-
-    }
-
-    class Listss () {
-
-    }
-
     class ListADV (a:int, b:int, c:int, f:int, g:ListADV) {
             fun printa:int() print(a);
             fun printb:int() print(b);
