@@ -325,7 +325,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     @Override
     public String visitNode(MethodNode n) throws VoidException { //come funNode
         if (print) printNode(n);
-        String label = freshFunLabel();
+        String label = freshMethodLabel();
         n.label = label;
 
         String declCode = null, popDecl = null, popParl = null;
@@ -447,11 +447,10 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "ltm", // load Access Link (pointer to frame of function "id" declaration)
                 "ltm", // duplicate top of stack
 
-
-
                 
-                //"lw",  //io non so se ci va qui questo, ma se è la stessa logica di sopra, noi aggiungiamo con
-                //getAR delle lw che vengono messe, quindi forse ci va?
+                "lw",//serve perchè non abbiamo l'object pointer in cima allo stack, ma l'access link. dentro
+                     // l'access link c'è l'object pointer e quindi facendo questa load carichiamo quello che serve
+
 
                 //qui ho cambiato con method perchè sarebbe il ID2 che è il metodo
                 "push " + n.methodEntry.offset,
@@ -497,12 +496,12 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         //da ritornare) e incrementa $hp
 
         String code = nlJoin( //boh
-//                "lhp ",
-//                "sw ",
-//                "lhp ",
-//                "push " + 1,
-//                "add ",
-//                "shp "
+                "lhp ",
+                "sw ",
+                "lhp ",
+                "push " + 1,
+                "add ",
+                "shp "
         );
 
         return nlJoin(

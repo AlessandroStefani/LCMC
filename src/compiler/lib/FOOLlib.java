@@ -37,6 +37,12 @@ public class FOOLlib {
 		return "function"+(funlabCount++);
 	}
 
+	private static int methlabCount = 0;
+
+	public static String freshMethodLabel() {
+		return "method"+(methlabCount++);
+	}
+
 	private static String funCode = null;
 
 	public static void putCode(String c) {
