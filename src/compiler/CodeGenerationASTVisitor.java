@@ -489,7 +489,8 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         //contenuto indirizzo MEMSIZE + offset classe ID
 
         String dispatch = nlJoin(
-                "push " + (ExecuteVM.MEMSIZE + n.classEntry.offset)
+                "push " + (ExecuteVM.MEMSIZE + n.classEntry.offset), //recupera
+                "lw "//serve per forza
         );
 
         //carica sullo stack il valore di $hp (indirizzo object pointer
