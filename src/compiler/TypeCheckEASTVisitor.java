@@ -3,6 +3,9 @@ package compiler;
 import compiler.AST.*;
 import compiler.exc.*;
 import compiler.lib.*;
+
+import java.util.stream.Collectors;
+
 import static compiler.TypeRels.*;
 
 //visitNode(n) fa il type checking di un Node n e ritorna:
@@ -287,8 +290,35 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 				}
 			}
 		} else {
+			superType.put(n.id, n.superId);
 			//ha sottoclasse, serve mappa in TypeRels
+			ClassTypeNode thisClassTypeNode = (ClassTypeNode) n.getType();
+			ClassTypeNode parentClassTypeNode = (ClassTypeNode) n.superEntry.type;
+			if (!isSubtype(thisClassTypeNode, parentClassTypeNode)) {
+				throw new TypeException(n.id + " is not subclass of " + n.superId, n.getLine());
+			}
 
+			//controllo i fields
+			for (int i = 0; i < n.fields.size(); i++) {
+				TypeNode subFieldType = n.fields.get(i).getType();
+				TypeNode superFieldType = parentClassTypeNode.allFields.get(i);
+
+				if (!isSubtype(subFieldType, superFieldType)) {
+					throw new TypeException("Field " + n.fields.get(i).id + " in " + n.id +
+							" is not the same " + superFieldType + "of parent class " + n.superId, n.getLine());
+				}
+			}
+
+			// metodi
+			for (int i = 0; i < n.methods.size(); i++) {
+				ArrowTypeNode subMethodType = (ArrowTypeNode) n.methods.get(i).getType();
+				ArrowTypeNode superMethodType = parentClassTypeNode.allMethods.get(i);
+
+				if (!isSubtype(subMethodType, superMethodType)) {
+					throw new TypeException("Method " + n.methods.get(i).id + " in " + n.id +
+							" is not the same " + superMethodType + "of parent class " + n.superId, n.getLine());
+				}
+			}
 		}
 
 		return null;
