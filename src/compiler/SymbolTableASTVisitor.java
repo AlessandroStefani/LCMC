@@ -384,7 +384,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		if (entry == null) {
 			System.out.println("Class id " + n.className + " at line "+ n.getLine() + " not declared");
 			stErrors++;
-		} else {
+		} if (!classTable.containsKey(n.className)) {
+			System.out.println("Id " + n.className + " at line "+ n.getLine() + " not a class");
+			stErrors++;
+		}else {
 			n.classEntry = entry;
 		}
 		for (Node arg : n.argumentList) visit(arg);
