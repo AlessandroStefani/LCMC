@@ -23,14 +23,17 @@ public class TypeRels {
 						//sono tutti e due RefTypeNode e nella mappa c'è una entry che dice che a è sottotipo di b
 						//– un tipo riferimento RefTypeNode sottotipo di un altro in base alla funzione superType
 							//• raggiungibilità applicandola multiple volte
-						((a instanceof RefTypeNode first) && ((b instanceof RefTypeNode second)) &&
-								superType.containsKey(first.id) && superType.get(first.id).equals(second.id)) ||
+						((a instanceof RefTypeNode first) &&
+								((b instanceof RefTypeNode second)) &&
+								superType.containsKey(first.id) &&
+								checkClassSubtypeMultilevel(first, second)) ||
 						//– un tipo funzionale ArrowTypeNode sottotipo di un altro (necessario per overriding tra metodi) in base
 						//alla:
 							//• relazione di co-varianza sul tipo di ritorno
 							//• relazione di contro-varianza sul tipo dei parametri
-						((a instanceof ArrowTypeNode method1) && (b instanceof ArrowTypeNode method2) &&
-								((method1.ret.equals(method2.ret)) || isSubtype(method1.ret, method2.ret)) &&
+						((a instanceof ArrowTypeNode method1) &&
+								(b instanceof ArrowTypeNode method2) &&
+									((method1.ret.equals(method2.ret)) || isSubtype(method1.ret, method2.ret)) &&
 								checkEqualsParameters(method1, method2));
 	}
 
@@ -42,6 +45,18 @@ public class TypeRels {
 			if (!(isSubtype(method2.parlist.get(i), method1.parlist.get(i)))) return false;
 		}
 		return true;
+	}
+
+	private static boolean checkClassSubtypeMultilevel(RefTypeNode a, RefTypeNode b) {
+		String current = a.id;
+		
+		while (superType.containsKey(current)) {
+			if (superType.get(current).equals(b.id)) {
+				return true;
+			}
+			current = superType.get(current);
+		}
+		return false;
 	}
 
 }
