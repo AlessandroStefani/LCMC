@@ -470,8 +470,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 
         //nelle slide dice di metterli come vengono, sicuro di cosi? non sono al contrario?
-        for (int i = n.argumentList.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.argumentList.get(i)));
-        //for (int i = 0; i < n. - n.classEntry.nl; i++) getAR = nlJoin(getAR, "lw");
+        for (int i =0 ; i < n.argumentList.size(); i++) argCode = nlJoin(argCode, visit(n.argumentList.get(i)));
 
         //prende i valori degli argomenti, uno alla volta, dallo stack e li
         //mette nello heap, incrementando $hp dopo ogni singola copia
@@ -499,6 +498,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String code = nlJoin( //boh
                 "lhp ",
                 "sw ",
+                "lhp ",
                 "lhp ",
                 "push " + 1,
                 "add ",

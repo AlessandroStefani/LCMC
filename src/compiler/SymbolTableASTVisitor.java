@@ -399,6 +399,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	public Void visitNode(ClassCallNode n) {
 		if (print) printNode(n);
 		STentry entry = stLookup(n.classId);
+
 		if (entry == null) {
 			System.out.println("Object id " + n.classId + " at line "+ n.getLine() + " not declared");
 			stErrors++;

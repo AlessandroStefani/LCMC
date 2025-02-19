@@ -16,5 +16,5 @@ let
     var a:Account = new Account (123456);
     var b:B = new B(true, true);
 in
-  print(l.first());
+  print(a.getMon());
 
