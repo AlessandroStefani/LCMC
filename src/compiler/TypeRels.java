@@ -34,10 +34,10 @@ public class TypeRels {
 						((a instanceof ArrowTypeNode method1) &&
 								(b instanceof ArrowTypeNode method2) &&
 									((method1.ret.equals(method2.ret)) || isSubtype(method1.ret, method2.ret)) &&
-								checkEqualsParameters(method1, method2));
+								checkEqualsMethodsParameters(method1, method2));
 	}
 
-	private static boolean checkEqualsParameters(ArrowTypeNode method1, ArrowTypeNode method2) {
+	private static boolean checkEqualsMethodsParameters(ArrowTypeNode method1, ArrowTypeNode method2) {
 		//numero parametri uguali
 		if (method1.parlist.size() != method2.parlist.size()) return false;
 		//parametro di 2 sottotipo di 1
