@@ -1,0 +1,20 @@
+let
+    class List (f:int, r:List) {
+      fun rest:List() r;
+      fun first:int() f;
+    }
+
+    class Account (money:int) {
+        fun getMon:int () money;
+    }
+
+    class B (t:bool, s:bool) {
+      fun dio:bool() t==s;
+    }
+
+    var l:List = new List (1, null);
+    var a:Account = new Account (123456);
+    var b:B = new B(true, true);
+in
+  print(l.first());
+
