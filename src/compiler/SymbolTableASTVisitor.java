@@ -284,9 +284,25 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 
 		List<TypeNode> typeFields = new ArrayList<>();
 		List<ArrowTypeNode> methArrowTypes = new ArrayList<>();
+		Map<String,STentry> superClassTable = new HashMap<>();
+
+		List<TypeNode> superTypeFields = new ArrayList<>();
+		List<ArrowTypeNode> superMethodsArrowTypes = new ArrayList<>();
+		if (n.superId!=null) {
+			n.superEntry = stLookup(n.superId);
+			ClassTypeNode superClassTypeNode = (ClassTypeNode) n.superEntry.type;
+			superTypeFields.addAll(superClassTypeNode.allFields);
+			superMethodsArrowTypes.addAll(superClassTypeNode.allMethods);
+			typeFields.addAll(superTypeFields);
+			methArrowTypes.addAll(superMethodsArrowTypes);
+
+			superClassTable = classTable.get(n.superId);
+		}
 
 		//estrapolo i tipi dei campi
-		for (FieldNode field : n.fields) typeFields.add(field.getType());
+		for (FieldNode field : n.fields) {
+			typeFields.add(field.getType());
+		}
 		//estrapolo l'arrowTypeNode di ogni metodo
 		List<TypeNode> methodParsTypes = new ArrayList<>();
 		for (MethodNode method : n.methods) {
@@ -309,16 +325,22 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		int prevNLDecOffset=decOffset; // stores counter for offset of declarations at previous nesting level
 		decOffset=0;
 
-		int fieldOffset=-1;
+		for (String superFieldId : superClassTable.keySet()) {
+			vt.put(superFieldId, superClassTable.get(superFieldId));
+		}
+
+		int fieldOffset= superTypeFields.isEmpty() ?-1:(-superTypeFields.size()-1);
+
 		for (FieldNode field : n.fields) {
 			field.offset = fieldOffset--;
-			if (vt.put(field.id, new STentry(nestingLevel, field.getType(), field.offset)) != null) {
+			//controllo già che non si vada a copiare il campo della superclasse
+			if (superClassTable.containsKey(field.id) || vt.put(field.id, new STentry(nestingLevel, field.getType(), field.offset)) != null) {
 				System.out.println("Field id " + field.id + " at line " + n.getLine() + " already declared");
 				stErrors++;
 			}
 		}
-
-		int methodOffset=0;
+		//TODO in vt ci vanno anche i metodi
+		int methodOffset= superMethodsArrowTypes.isEmpty()?0:superMethodsArrowTypes.size();
 		for (MethodNode meth : n.methods) {
 			meth.offset = methodOffset++;
 			visit(meth);
