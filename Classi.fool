@@ -5,7 +5,11 @@ let
     }
 
     class Account (money:int) {
-        fun getMon:int () money;
+      fun getMon:int () money;
+    }
+
+    class TradingAcc extends Account (invested:int) {
+      fun getInv:int () invested;
     }
 
     class B (t:bool, s:bool) {
@@ -13,7 +17,7 @@ let
     }
 
     var l:List = new List (1, null);
-    var a:Account = new Account (123456);
+    var a:TradingAcc = new TradingAcc(123456, 50);
     var b:B = new B(true, true);
 in
   print(a.getMon());

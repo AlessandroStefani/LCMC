@@ -288,7 +288,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 			for (var x : ctx.methdec()) methods.add((MethodNode) visit(x));
 		}
 
-		Node n = new ClassNode(name, methods, fields, superClass);
+		Node n = new ClassNode(name, methods, fields, superClass, new ClassTypeNode(new ArrayList<>(), new ArrayList<>())); //TODO: CHECK -> slide 15
 		n.setLine(ctx.CLASS().getSymbol().getLine());
 
 		return n;
@@ -305,6 +305,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 
 		List<ParNode> parList = new ArrayList<>();
 		List<DecNode> decList = new ArrayList<>();
+		TypeNode returnType = (TypeNode) visit(ctx.type(0));
 
 		for (int i = 1; i < ctx.ID().size(); i++) {
 			ParNode param = new ParNode(ctx.ID(i).getText(), (TypeNode) visit(ctx.type(i)));
@@ -318,10 +319,11 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		if (!ctx.ID().isEmpty()) {
 			n = new MethodNode(
 					ctx.ID(0).getText(),
-					(TypeNode) visit(ctx.type(0)),
+					returnType,
 					parList,
 					decList,
-					visit(ctx.exp())
+					visit(ctx.exp()),
+					new ArrowTypeNode(new ArrayList<>(), returnType) //TODO: riempire eventualmente
 			);
 
 			n.setLine(ctx.FUN().getSymbol().getLine());

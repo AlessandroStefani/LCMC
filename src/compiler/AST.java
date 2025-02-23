@@ -405,12 +405,13 @@ public class AST {
 		String label;//etichetta per indirizzo
 		int offset = 0;//se non si eredita, 0. altrimenti settato in base a classtypenode
 
-        MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
+        MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e, TypeNode t) {
             id = i;
             retType = rt;
             parlist = Collections.unmodifiableList(pl);
             declist = Collections.unmodifiableList(dl);
             exp = e;
+            super.type = t;
         }
 
         @Override
@@ -446,11 +447,12 @@ public class AST {
         final String superId; //nulla se non c'è
         STentry superEntry;
 
-        public ClassNode(String id, List<MethodNode> methods, List<FieldNode> fields, String superId) {
+        public ClassNode(String id, List<MethodNode> methods, List<FieldNode> fields, String superId, TypeNode t) {
             this.id = id;
             this.methods = Collections.unmodifiableList(methods);
             this.fields = Collections.unmodifiableList(fields);
             this.superId = superId;
+            super.type = t;
         }
 
 
