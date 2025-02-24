@@ -324,10 +324,11 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				fieldOffset++;
 				int oldOffset = vt.get(field.id).offset;
 				vt.put(field.id,new STentry(nestingLevel, field.getType(),oldOffset));
-				//TODO ((ClassTypeNode) entry.type).allFields.set(ROBA);
+				((ClassTypeNode) entry.type).allFields.set(-oldOffset-1, field.getType());
+			} else {
+				//Aggiorno ClassTypeNode della entry.
+				((ClassTypeNode) entry.type).allFields.add(field.getType());
 			}
-			//Aggiorno ClassTypeNode della entry. Il prof non fa distinzioni, la inserisce sempre in ogni caso
-			((ClassTypeNode) entry.type).allFields.add(field.getType());
 		}
 
 		for (MethodNode meth : n.methods) {
@@ -340,17 +341,17 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 
 			//inserisco i metodi in virtual table curando il fatto che se presente nella superclasse devo fare override
 			//mantenedo il precedente offset
+			List<TypeNode> methodParsTypes = new ArrayList<>();
+			for (ParNode par : meth.parlist) methodParsTypes.add(par.getType());
 			if(vt.putIfAbsent(meth.id, new STentry(nestingLevel, meth.getType(), meth.offset))!=null){
 				decOffset--;
 				int oldOffset = vt.get(meth.id).offset;
 				vt.put(meth.id,new STentry(nestingLevel, meth.getType(),oldOffset));
-				//TODO ((ClassTypeNode) entry.type).allMethods.set(ROBA);
+				((ClassTypeNode) entry.type).allMethods.set(oldOffset, new ArrowTypeNode(methodParsTypes,meth.retType));
+			} else {
+				//Aggiorno allMethods di ClassTypeNode.
+				((ClassTypeNode) entry.type).allMethods.add(new ArrowTypeNode(methodParsTypes,meth.retType));
 			}
-
-			//Aggiorno allMethods di ClassTypeNode. Il prof non fa distinzioni, la inserisce sempre in ogni caso
-			List<TypeNode> methodParsTypes = new ArrayList<>();
-			for (ParNode par : meth.parlist) methodParsTypes.add(par.getType());
-			((ClassTypeNode) entry.type).allMethods.add(new ArrowTypeNode(methodParsTypes,meth.retType));
 
 			visit(meth);
 		}
@@ -363,10 +364,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 			System.out.println("Class id " + n.id + " at line "+ n.getLine() +" already declared");
 			stErrors++;
 		}
-
-		System.out.println("CLASS ID:"+ n.id);
-		System.out.println("CLASS TYPE:"+ n.getType());
-
+		
 		//inserimento ID nella classTable
 		classTable.put(n.id, vt);
 		return null;
