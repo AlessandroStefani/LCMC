@@ -324,6 +324,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				fieldOffset++;
 				int oldOffset = vt.get(field.id).offset;
 				vt.put(field.id,new STentry(nestingLevel, field.getType(),oldOffset));
+				//TODO ((ClassTypeNode) entry.type).allFields.set(ROBA);
 			}
 			//Aggiorno ClassTypeNode della entry. Il prof non fa distinzioni, la inserisce sempre in ogni caso
 			((ClassTypeNode) entry.type).allFields.add(field.getType());
@@ -343,6 +344,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				decOffset--;
 				int oldOffset = vt.get(meth.id).offset;
 				vt.put(meth.id,new STentry(nestingLevel, meth.getType(),oldOffset));
+				//TODO ((ClassTypeNode) entry.type).allMethods.set(ROBA);
 			}
 
 			//Aggiorno allMethods di ClassTypeNode. Il prof non fa distinzioni, la inserisce sempre in ogni caso
@@ -434,6 +436,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	public Void visitNode(ClassCallNode n) {
 		if (print) printNode(n);
 		STentry entry = stLookup(n.classId);
+
+
 
 		if (entry == null) {
 			System.out.println("Object id " + n.classId + " at line "+ n.getLine() + " not declared");
