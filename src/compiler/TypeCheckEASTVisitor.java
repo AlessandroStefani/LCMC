@@ -292,14 +292,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		} else {
 			superType.put(n.id, n.superId);
 			//ha sottoclasse, serve mappa in TypeRels
-			ClassTypeNode thisClassTypeNode = (ClassTypeNode) n.getType();
+			//ClassTypeNode thisClassTypeNode = (ClassTypeNode) n.getType();
+
 			ClassTypeNode parentClassTypeNode = (ClassTypeNode) n.superEntry.type;
-			if (!isSubtype(thisClassTypeNode, parentClassTypeNode)) {
-				throw new TypeException(n.id + " is not subclass of " + n.superId, n.getLine());
-			}
 
 			//controllo i fields
-			for (int i = 0; i < n.fields.size(); i++) {
+			for (int i = 0; i < parentClassTypeNode.allFields.size(); i++) {
 				TypeNode subFieldType = n.fields.get(i).getType();
 				TypeNode superFieldType = parentClassTypeNode.allFields.get(i);
 
@@ -310,7 +308,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			}
 
 			// metodi
-			for (int i = 0; i < n.methods.size(); i++) {
+			for (int i = 0; i < parentClassTypeNode.allMethods.size(); i++) {
 				ArrowTypeNode subMethodType = (ArrowTypeNode) n.methods.get(i).getType();
 				ArrowTypeNode superMethodType = parentClassTypeNode.allMethods.get(i);
 

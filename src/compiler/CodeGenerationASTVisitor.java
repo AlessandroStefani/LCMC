@@ -359,13 +359,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
         for (var method : n.methods) {//bisogna gestire l'eredita dei metodi, todo, in teoria si usa la .set(?)
             visit(method);
-            //???
             String methodLabel = method.label; //me pare giusto
             int methodOffset = method.offset; //me pare giusto
-            //dispatchTable.set(methodOffset, methodLabel);
-            //dispatchTable.add(methodLabel);
 
-            //direi così
             if (methodOffset>=dispatchTable.size()){
                 dispatchTable.add(methodOffset, methodLabel);
             } else {
@@ -376,7 +372,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 //  Il punto è che la questione è già risolta in SymbolTableASTVisitor, ma a questo punto sono un po' confuso sull superDispatchTable... boh scoprirò
                 dispatchTable.set(methodOffset, methodLabel); //qui non si dovrebbe entrare mai se non sbaglio, ma per sicurezza c'è
             }
-            //???
         }
 
         String code = null;
