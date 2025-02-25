@@ -350,12 +350,11 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         if (print) printNode(n, n.superId!=null? n.id + " Extends " + n.superId : n.id);
 
         List<String> dispatchTable = new ArrayList<>();
+        this.dispatchTables.add(dispatchTable);
         if (n.superId != null) {
             //eredito, in teoria dovrebbe essere cosi questo
             final List<String> superDispatchTable = this.dispatchTables.get(-n.superEntry.offset - 2);
             dispatchTable.addAll(superDispatchTable);
-        } else {
-            this.dispatchTables.add(dispatchTable);
         }
 
         for (var method : n.methods) {//bisogna gestire l'eredita dei metodi, todo, in teoria si usa la .set(?)
