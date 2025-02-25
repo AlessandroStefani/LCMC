@@ -301,7 +301,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 				TypeNode subFieldType = n.fields.get(i).getType();
 				TypeNode superFieldType = parentClassTypeNode.allFields.get(i);
 
-				if (!isSubtype(subFieldType, superFieldType)) {
+				//ottimizzazione pag 48 49
+				int position = -n.fields.get(i).offset-1;
+
+				boolean isOverriding = position < parentClassTypeNode.allFields.size();
+
+				if (isOverriding && !isSubtype(subFieldType, superFieldType)) {
 					throw new TypeException("Field " + n.fields.get(i).id + " in " + n.id +
 							" is not the same " + superFieldType + "of parent class " + n.superId, n.getLine());
 				}
@@ -311,8 +316,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			for (int i = 0; i < parentClassTypeNode.allMethods.size(); i++) {
 				ArrowTypeNode subMethodType = (ArrowTypeNode) n.methods.get(i).getType();
 				ArrowTypeNode superMethodType = parentClassTypeNode.allMethods.get(i);
+				//ottimizzazione pag 48 49
+				int position = n.methods.get(i).offset;
 
-				if (!isSubtype(subMethodType, superMethodType)) {
+				boolean isOverriding = position < parentClassTypeNode.allMethods.size();
+
+				if (isOverriding && !isSubtype(subMethodType, superMethodType)) {
 					throw new TypeException("Method " + n.methods.get(i).id + " in " + n.id +
 							" is not the same " + superMethodType + "of parent class " + n.superId, n.getLine());
 				}
