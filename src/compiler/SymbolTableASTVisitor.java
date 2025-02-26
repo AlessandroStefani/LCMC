@@ -346,9 +346,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 			for (ParNode par : meth.parlist) methodParsTypes.add(par.getType());
 			if(vt.putIfAbsent(meth.id, new STentry(nestingLevel, methodType, meth.offset))!=null){
 				decOffset--;
-				int oldOffset = vt.get(meth.id).offset;
-				vt.put(meth.id,new STentry(nestingLevel, methodType,oldOffset));
-				((ClassTypeNode) entry.type).allMethods.set(oldOffset, methodType);
+				meth.offset = vt.get(meth.id).offset;
+				vt.put(meth.id,new STentry(nestingLevel, methodType,meth.offset));
+				((ClassTypeNode) entry.type).allMethods.set(meth.offset, methodType);
 			} else {
 				//Aggiorno allMethods di ClassTypeNode.
 				((ClassTypeNode) entry.type).allMethods.add(methodType);
@@ -356,6 +356,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 
 			visit(meth);
 		}
+
+
 		//rimuovere la hashmap corrente poiche' esco dallo scope
 		symTable.remove(nestingLevel--);
 		decOffset=prevNLDecOffset; // restores counter for offset of declarations at previous nesting level
