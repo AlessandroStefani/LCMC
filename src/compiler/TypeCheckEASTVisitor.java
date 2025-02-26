@@ -292,39 +292,45 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		} else {
 			superType.put(n.id, n.superId);
 			//ha sottoclasse, serve mappa in TypeRels
-			//ClassTypeNode thisClassTypeNode = (ClassTypeNode) n.getType();
-
+			ClassTypeNode thisClassTypeNode = (ClassTypeNode) n.getType();
 			ClassTypeNode parentClassTypeNode = (ClassTypeNode) n.superEntry.type;
 
 			//controllo i fields
-			for (int i = 0; i < parentClassTypeNode.allFields.size(); i++) {
-				TypeNode subFieldType = n.fields.get(i).getType();
-				TypeNode superFieldType = parentClassTypeNode.allFields.get(i);
-
+			final ClassTypeNode superClassType = (ClassTypeNode) n.superEntry.type;
+			for (int i = 0; i < n.fields.size(); i++) {
 				//ottimizzazione pag 48 49
-				int position = -n.fields.get(i).offset-1;
 
-				boolean isOverriding = position < parentClassTypeNode.allFields.size();
+				FieldNode field = n.fields.get(i);
+				int position = -field.offset - 1;
 
-				if (isOverriding && !isSubtype(subFieldType, superFieldType)) {
-					throw new TypeException("Field " + n.fields.get(i).id + " in " + n.id +
-							" is not the same " + superFieldType + "of parent class " + n.superId, n.getLine());
+				boolean isOverriding = position < superClassType.allFields.size();
+
+				if (isOverriding) {
+					TypeNode thisClassField = thisClassTypeNode.allFields.get(position);
+					TypeNode parentClassField = superClassType.allFields.get(position);
+
+					if (!isSubtype(thisClassField, parentClassField)) {
+						throw new TypeException("Field " + n.fields.get(position).id + " in " + n.id +
+								" is not the same " + parentClassTypeNode.allFields.get(position) + "of parent class " + n.superId, n.getLine());
+					}
 				}
+
 			}
 
 			// metodi
-			for (int i = 0; i < parentClassTypeNode.allMethods.size(); i++) {
-				ArrowTypeNode subMethodType = (ArrowTypeNode) n.methods.get(i).getType();
-				ArrowTypeNode superMethodType = parentClassTypeNode.allMethods.get(i);
+			for (int i = 0; i < n.methods.size(); i++) {
 				//ottimizzazione pag 48 49
 				int position = n.methods.get(i).offset;
-
 				boolean isOverriding = position < parentClassTypeNode.allMethods.size();
-
-				if (isOverriding && !isSubtype(subMethodType, superMethodType)) {
-					throw new TypeException("Method " + n.methods.get(i).id + " in " + n.id +
-							" is not the same " + superMethodType + "of parent class " + n.superId, n.getLine());
+				if (isOverriding) {
+					ArrowTypeNode subMethodType = (ArrowTypeNode) n.methods.get(i).getType();
+					ArrowTypeNode superMethodType = parentClassTypeNode.allMethods.get(i);
+					if (!isSubtype(subMethodType, superMethodType)) {
+						throw new TypeException("Method " + n.methods.get(i).id + " in " + n.id +
+								" is not the same " + superMethodType + "of parent class " + n.superId, n.getLine());
+					}
 				}
+
 			}
 		}
 
