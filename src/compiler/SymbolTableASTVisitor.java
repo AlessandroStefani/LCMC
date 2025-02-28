@@ -322,9 +322,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 			//mantenedo il precedente offset
 			if(vt.putIfAbsent(field.id,new STentry(nestingLevel, field.getType(),field.offset)) != null) {
 				fieldOffset++;
-				int oldOffset = vt.get(field.id).offset;
-				vt.put(field.id,new STentry(nestingLevel, field.getType(),oldOffset));
-				((ClassTypeNode) entry.type).allFields.set(-oldOffset-1, field.getType());
+				field.offset = vt.get(field.id).offset;
+				vt.put(field.id,new STentry(nestingLevel, field.getType(),field.offset));
+				((ClassTypeNode) entry.type).allFields.set(-field.offset-1, field.getType());
 			} else {
 				//Aggiorno ClassTypeNode della entry.
 				((ClassTypeNode) entry.type).allFields.add(field.getType());
