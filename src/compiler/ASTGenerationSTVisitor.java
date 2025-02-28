@@ -295,7 +295,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 				methods.add(method);
 
 				//TODO lol cosa ho tirato fuori
-				ArrowTypeNode methodArrowType = new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).toList(),method.retType);
+				ArrowTypeNode methodArrowType = new ArrowTypeNode(method.parlist.stream().map(ParNode::getType).toList(),method.retType);
 				methodsArrowTypes.add(methodArrowType);
 			}
 		}
