@@ -267,6 +267,9 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<FieldNode> fields = new ArrayList<>();
 		List<MethodNode> methods = new ArrayList<>();
 
+		List<TypeNode> fieldTypes = new ArrayList<>();
+		List<ArrowTypeNode> methodsArrowTypes = new ArrayList<>();
+
 		//il codice è da mettere a posto ma funziona
 		if (superClass!=null) {
 			for (int i = 2; i < ctx.ID().size(); i++){
@@ -275,6 +278,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 				FieldNode f = new FieldNode(field, type);
 				f.setLine(ctx.ID(i).getSymbol().getLine());
 				fields.add(f);
+				fieldTypes.add(type);
 			}
 			for (var x : ctx.methdec()) methods.add((MethodNode) visit(x));
 		} else {
@@ -284,11 +288,19 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 				FieldNode f = new FieldNode(field, type);
 				f.setLine(ctx.ID(i).getSymbol().getLine());
 				fields.add(f);
+				fieldTypes.add(type);
 			}
-			for (var x : ctx.methdec()) methods.add((MethodNode) visit(x));
+			for (var x : ctx.methdec()) {
+				MethodNode method = (MethodNode) visit(x);
+				methods.add(method);
+
+				//TODO lol cosa ho tirato fuori
+				ArrowTypeNode methodArrowType = new ArrowTypeNode(method.parlist.stream().map(DecNode::getType).toList(),method.retType);
+				methodsArrowTypes.add(methodArrowType);
+			}
 		}
 
-		Node n = new ClassNode(name, methods, fields, superClass, new ClassTypeNode(new ArrayList<>(), new ArrayList<>())); //TODO: CHECK -> slide 15
+		Node n = new ClassNode(name, methods, fields, superClass, new ClassTypeNode(new ArrayList<>(fieldTypes), new ArrayList<>(methodsArrowTypes))); //TODO: CHECK -> slide 15
 		n.setLine(ctx.CLASS().getSymbol().getLine());
 
 		return n;
@@ -307,10 +319,13 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<DecNode> decList = new ArrayList<>();
 		TypeNode returnType = (TypeNode) visit(ctx.type(0));
 
+		List<TypeNode> parTypes = new ArrayList<>();
+
 		for (int i = 1; i < ctx.ID().size(); i++) {
 			ParNode param = new ParNode(ctx.ID(i).getText(), (TypeNode) visit(ctx.type(i)));
 			param.setLine(ctx.ID(i).getSymbol().getLine());
 			parList.add(param);
+			parTypes.add(param.getType());
 		}
 
 		for (DecContext dec : ctx.dec()) decList.add((DecNode) visit(dec));
@@ -323,7 +338,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 					parList,
 					decList,
 					visit(ctx.exp()),
-					new ArrowTypeNode(new ArrayList<>(), returnType) //TODO: riempire eventualmente
+					new ArrowTypeNode(new ArrayList<>(parTypes), returnType) //TODO keep an eye
 			);
 
 			n.setLine(ctx.FUN().getSymbol().getLine());
