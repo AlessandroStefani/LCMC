@@ -60,23 +60,42 @@ public class TypeRels {
 	}
 
 	//TODO
-	private TypeNode lowestCommonAncestor(TypeNode a, TypeNode b){
+	private TypeNode lowestCommonAncestor(TypeNode a, TypeNode b) {
 		if (a instanceof EmptyTypeNode) return b;
 		if (b instanceof EmptyTypeNode) return a;
 
-		if (a instanceof IntTypeNode || b instanceof IntTypeNode) return new IntTypeNode();
-		if (a instanceof BoolTypeNode || b instanceof BoolTypeNode) return new BoolTypeNode();
+		if (a instanceof IntTypeNode && b instanceof IntTypeNode) return new IntTypeNode();
+		if (a instanceof BoolTypeNode && b instanceof BoolTypeNode) return new BoolTypeNode();
 
-		if (!(a instanceof RefTypeNode) && !(b instanceof RefTypeNode)) return null;
-
-        RefTypeNode refA = (RefTypeNode) a;
-		RefTypeNode refB = (RefTypeNode) b;
-
-		if (checkClassSubtypeMultilevel(refA, refB)) {
-			return refA; //TODO non ho capito quale delle due classi vuole; nelle slide inoltre dice di controllare
-			//ogni volta se le due classi sono sottotipo, ma tecnicamente se ci sono nella mappa lo dovrebbero essere.
+		if ((a instanceof IntTypeNode && b instanceof BoolTypeNode) ||
+				(a instanceof BoolTypeNode && b instanceof IntTypeNode)) {
+			return new IntTypeNode();
 		}
 
+		if (!(a instanceof RefTypeNode) || !(b instanceof RefTypeNode)) {
+			return null;
+		}
+
+		RefTypeNode refA = (RefTypeNode) a;
+		RefTypeNode refB = (RefTypeNode) b;
+
+		if (isSubtype(refA, refB)) {
+			return refB;
+		}
+
+		if (isSubtype(refB, refA)) {
+			return refA;
+		}
+
+		String current = refA.id;
+		while (superType.containsKey(current)) {
+			String ancestor = superType.get(current);
+			RefTypeNode ancestorNode = new RefTypeNode(ancestor);
+			if (isSubtype(refB, ancestorNode)) {
+				return ancestorNode;
+			}
+			current = ancestor;
+		}
 
 		return null;
 	}
