@@ -24,14 +24,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		visit(t);
 		return t;
 	}
-
-	//TODO
-	private TypeNode lowestCommonAncestor(TypeNode a, TypeNode b){
-		if (a instanceof EmptyTypeNode) return b;
-		if (b instanceof EmptyTypeNode) return a;
-
-		return null;
-	}
 	
 	@Override
 	public TypeNode visitNode(ProgLetInNode n) throws TypeException {
