@@ -3,6 +3,7 @@ package compiler;
 import compiler.AST.*;
 import compiler.lib.*;
 
+import java.sql.Ref;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,8 +62,20 @@ public class TypeRels {
 
 	//TODO
 	private TypeNode lowestCommonAncestor(TypeNode a, TypeNode b) {
-		if (a instanceof EmptyTypeNode) return b;
-		if (b instanceof EmptyTypeNode) return a;
+		if (a instanceof EmptyTypeNode && b instanceof EmptyTypeNode) return null;
+
+		if ((a instanceof RefTypeNode || a instanceof EmptyTypeNode)
+				&& (b instanceof RefTypeNode || b instanceof EmptyTypeNode)) {
+			if (a instanceof EmptyTypeNode) return b;
+			if (b instanceof EmptyTypeNode) return a;
+
+			RefTypeNode refA = (RefTypeNode) a;
+			RefTypeNode refB = (RefTypeNode) b;
+
+			if (isSubtype(refA, refB)) {
+				return refA;
+			}
+		};
 
 		if (a instanceof IntTypeNode && b instanceof IntTypeNode) return new IntTypeNode();
 		if (a instanceof BoolTypeNode && b instanceof BoolTypeNode) return new BoolTypeNode();
@@ -72,30 +85,15 @@ public class TypeRels {
 			return new IntTypeNode();
 		}
 
-		if (!(a instanceof RefTypeNode) || !(b instanceof RefTypeNode)) {
-			return null;
-		}
-
-		RefTypeNode refA = (RefTypeNode) a;
-		RefTypeNode refB = (RefTypeNode) b;
-
-		if (isSubtype(refA, refB)) {
-			return refB;
-		}
-
-		if (isSubtype(refB, refA)) {
-			return refA;
-		}
-
-		String current = refA.id;
-		while (superType.containsKey(current)) {
-			String ancestor = superType.get(current);
-			RefTypeNode ancestorNode = new RefTypeNode(ancestor);
-			if (isSubtype(refB, ancestorNode)) {
-				return ancestorNode;
-			}
-			current = ancestor;
-		}
+//		String current = refA.id;
+//		while (superType.containsKey(current)) {
+//			String ancestor = superType.get(current);
+//			RefTypeNode ancestorNode = new RefTypeNode(ancestor);
+//			if (isSubtype(refB, ancestorNode)) {
+//				return ancestorNode;
+//			}
+//			current = ancestor;
+//		}
 
 		return null;
 	}
