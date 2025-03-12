@@ -4,6 +4,7 @@ import compiler.AST.*;
 import compiler.exc.*;
 import compiler.lib.*;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static compiler.TypeRels.*;
@@ -80,9 +81,12 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			throw new TypeException("Non boolean condition in if",n.getLine());
 		TypeNode t = visit(n.th);
 		TypeNode e = visit(n.el);
-		if (isSubtype(t, e)) return e;
-		if (isSubtype(e, t)) return t;
-		throw new TypeException("Incompatible types in then-else branches",n.getLine());
+		TypeNode lowestCommonAncestor = lowestCommonAncestor(t, e);
+		if (lowestCommonAncestor != null) {
+			return lowestCommonAncestor;
+		} else {
+			throw new TypeException("Incompatible types in then-else branches",n.getLine());
+		}
 	}
 
 	@Override
@@ -371,8 +375,9 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		if ( !(t instanceof ClassTypeNode) )
 			throw new TypeException("Invocation of a non-object " + n.className,n.getLine());
 		ClassTypeNode at = (ClassTypeNode) t;
-		if ( !(at.allFields.size() == n.argumentList.size()) )
-			throw new TypeException("Wrong number of parameters in the invocation of "+n.className,n.getLine());
+		if ( !(at.allFields.size() == n.argumentList.size()) ) {
+			throw new TypeException("Wrong number of parameters in the invocation of " + n.className, n.getLine());
+		}
 		for (int i = 0; i < n.argumentList.size(); i++)
 			if ( !(isSubtype(visit(n.argumentList.get(i)),at.allFields.get(i))) )
 				throw new TypeException("Wrong type for "+(i+1)+"-th parameter in the invocation of "+n.className,n.getLine());

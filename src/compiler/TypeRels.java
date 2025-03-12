@@ -61,39 +61,28 @@ public class TypeRels {
 	}
 
 	//TODO
-	private TypeNode lowestCommonAncestor(TypeNode a, TypeNode b) {
-		if (a instanceof EmptyTypeNode && b instanceof EmptyTypeNode) return null;
+	public static TypeNode lowestCommonAncestor(TypeNode a, TypeNode b) {
 
 		if ((a instanceof RefTypeNode || a instanceof EmptyTypeNode)
-				&& (b instanceof RefTypeNode || b instanceof EmptyTypeNode)) {
+				&& (b instanceof RefTypeNode || b instanceof EmptyTypeNode)){
+			//se uno tra "a" e "b" è EmptyTypeNode torna l'altro
+			if (a instanceof EmptyTypeNode && b instanceof EmptyTypeNode) return null;
 			if (a instanceof EmptyTypeNode) return b;
 			if (b instanceof EmptyTypeNode) return a;
 
-			RefTypeNode refA = (RefTypeNode) a;
-			RefTypeNode refB = (RefTypeNode) b;
-
-			if (isSubtype(refA, refB)) {
-				return refA;
-			}
-		};
-
-		if (a instanceof IntTypeNode && b instanceof IntTypeNode) return new IntTypeNode();
-		if (a instanceof BoolTypeNode && b instanceof BoolTypeNode) return new BoolTypeNode();
-
-		if ((a instanceof IntTypeNode && b instanceof BoolTypeNode) ||
-				(a instanceof BoolTypeNode && b instanceof IntTypeNode)) {
-			return new IntTypeNode();
+			if (isSubtype(a,b)) return new RefTypeNode(((RefTypeNode) a).id);
+			if (isSubtype(b,a)) return new RefTypeNode(((RefTypeNode) b).id);
 		}
 
-//		String current = refA.id;
-//		while (superType.containsKey(current)) {
-//			String ancestor = superType.get(current);
-//			RefTypeNode ancestorNode = new RefTypeNode(ancestor);
-//			if (isSubtype(refB, ancestorNode)) {
-//				return ancestorNode;
-//			}
-//			current = ancestor;
-//		}
+		//torna int se almeno uno è int, bool altrimenti
+		if((a instanceof IntTypeNode || a instanceof BoolTypeNode)
+				&& (b instanceof IntTypeNode || b instanceof BoolTypeNode)){
+			if (a instanceof IntTypeNode || b instanceof IntTypeNode) {
+				return new IntTypeNode();
+			} else {
+				return new BoolTypeNode();
+			}
+		}
 
 		return null;
 	}
