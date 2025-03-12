@@ -16,7 +16,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	 * La ClassTable è usata per salvare le virtual table delle classi.
 	 */
 	private final Map<String, Map<String, STentry>> classTable = new HashMap<>(); //dove HashMap<String, STentry> è la VirtualTable della classe con id String
-																						//la sfrutteremo quando faremo le Call
+
 	SymbolTableASTVisitor() {}
 	SymbolTableASTVisitor(boolean debug) {super(debug);} // enables print for debugging
 
@@ -335,7 +335,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 			meth.offset = decOffset++;
 			//controllo che il metodo non sia già presente all'interno di questa classe
 			if(!thisClassAllIds.add(meth.id)) {
-				System.out.println("Method id " + meth.id + " at line " + n.getLine() + " already declared ClassNode");
+				System.out.println("Method id " + meth.id + " at line " + n.getLine() + " already declared");
 				stErrors++;
 			}
 
@@ -373,7 +373,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		return null;
 	}
 
-	//TODO
 	/**
 	 *
 	 * @param n
@@ -393,6 +392,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 //			System.out.println("Method id " + n.id + " at line "+ n.getLine() +" already declared MethodNode");
 //			stErrors++;
 //		}
+
 		//creare una nuova hashmap per la symTable
 		nestingLevel++;
 		Map<String, STentry> hmn = new HashMap<>();

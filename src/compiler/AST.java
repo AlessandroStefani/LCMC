@@ -487,7 +487,7 @@ public class AST {
     public static class NewNode extends Node {
         final String className;//nome classe
         final List<Node> argumentList;//argomenti del costruttore
-        STentry classEntry;//potrebbe essere utile? ci si mette la STentry della classe
+        STentry classEntry;
 
         NewNode(String id, final List<Node> args) {
             this.className = id;
@@ -504,8 +504,8 @@ public class AST {
         final String classId;//classe
         final String methodId;//metodo
         final List<Node> argumentList;//argomenti del metodo
-        STentry classEntry;//potrebbe essere utile? ci si mette la STentry della classe
-        STentry methodEntry;//potrebbe essere utile? ci si mette la STentry del metodo
+        STentry classEntry;
+        STentry methodEntry;
         int nestingLevel;
 
         ClassCallNode(final String classId, final String methodId, final List<Node> args) {

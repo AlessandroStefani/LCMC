@@ -125,14 +125,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(LessEqualNode n) { //TODO
+    public String visitNode(LessEqualNode n) {
         if (print) printNode(n);
         String l1 = freshLabel();
         String l2 = freshLabel();
         return nlJoin(
                 visit(n.left),
                 visit(n.right),
-                "bleq " + l1, //?
+                "bleq " + l1,
                 "push 0",
                 "b " + l2,
                 l1 + ":",
@@ -142,14 +142,14 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(GreaterEqualNode n) { //TODO
+    public String visitNode(GreaterEqualNode n) {
         if (print) printNode(n);
         String l1 = freshLabel();
         String l2 = freshLabel();
         return nlJoin(
                 visit(n.right),
                 visit(n.left),
-                "bleq " + l1, //?
+                "bleq " + l1,
                 "push 0",
                 "b " + l2,
                 l1 + ":",
@@ -352,25 +352,20 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         List<String> dispatchTable = new ArrayList<>();
         this.dispatchTables.add(dispatchTable);
         if (n.superId != null) {
-            //eredito, in teoria dovrebbe essere cosi questo
+            //eredito
             final List<String> superDispatchTable = this.dispatchTables.get(-n.superEntry.offset - 2);
             dispatchTable.addAll(superDispatchTable);
         }
 
-        for (var method : n.methods) {//bisogna gestire l'eredita dei metodi, todo, in teoria si usa la .set(?)
+        for (var method : n.methods) {
             visit(method);
-            String methodLabel = method.label; //me pare giusto
-            int methodOffset = method.offset; //me pare giusto
+            String methodLabel = method.label;
+            int methodOffset = method.offset;
 
             if (methodOffset>=dispatchTable.size()){
                 dispatchTable.add(methodOffset, methodLabel);
             } else {
-                //quando eredita il metodo va qui i guess
-                //avevo ipotizzato, ma probabilmente è risolvibile durante la gen della SymbolTable: una classe C1 con il metodo A estende una classe C2 con i metodi B(offset 0) e A (offset 1):
-                //  il metodo A della classe C1 potrebbe già avere offset 1, se è possibile fare un controllo sul nome dei metodi della superclass C2 e, trovando in entrambe i metodi A,
-                //  possiamo già inserire che C1 ha il metodo B in offset 0 (ereditato) e A in offset 1 (override), se C1 avesse anche un metodo M, questo avrebbe offset 2 se non sbaglio.
-                //  Il punto è che la questione è già risolta in SymbolTableASTVisitor, ma a questo punto sono un po' confuso sull superDispatchTable... boh scoprirò
-                dispatchTable.set(methodOffset, methodLabel); //qui non si dovrebbe entrare mai se non sbaglio, ma per sicurezza c'è
+                dispatchTable.set(methodOffset, methodLabel);
             }
         }
 
@@ -403,7 +398,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         String argCode = null, getAR = null;
         for (int i = n.argumentList.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.argumentList.get(i)));
         for (int i = 0; i < n.nestingLevel - n.classEntry.nl; i++) getAR = nlJoin(getAR, "lw");
-        return nlJoin(  //TODO
+        return nlJoin(
                 "lfp", // load Control Link (pointer to frame of function "id" caller)
                 argCode, // generate code for argument expressions in reversed order
                 "lfp", getAR, // retrieve address of frame containing "id" declaration
@@ -449,8 +444,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
         String argCode = null, argValue = null;
 
-
-        //nelle slide dice di metterli come vengono, sicuro di cosi? non sono al contrario?
         for (int i =0 ; i < n.argumentList.size(); i++) argCode = nlJoin(argCode, visit(n.argumentList.get(i)));
 
         //prende i valori degli argomenti, uno alla volta, dallo stack e li

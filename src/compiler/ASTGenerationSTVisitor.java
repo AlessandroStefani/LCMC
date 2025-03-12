@@ -1,7 +1,6 @@
 package compiler;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -294,13 +293,12 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 				MethodNode method = (MethodNode) visit(x);
 				methods.add(method);
 
-				//TODO lol cosa ho tirato fuori
 				ArrowTypeNode methodArrowType = new ArrowTypeNode(method.parlist.stream().map(ParNode::getType).toList(),method.retType);
 				methodsArrowTypes.add(methodArrowType);
 			}
 		}
 
-		Node n = new ClassNode(name, methods, fields, superClass, new ClassTypeNode(new ArrayList<>(fieldTypes), new ArrayList<>(methodsArrowTypes))); //TODO: CHECK -> slide 15
+		Node n = new ClassNode(name, methods, fields, superClass, new ClassTypeNode(new ArrayList<>(fieldTypes), new ArrayList<>(methodsArrowTypes)));
 		n.setLine(ctx.CLASS().getSymbol().getLine());
 
 		return n;
@@ -338,7 +336,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 					parList,
 					decList,
 					visit(ctx.exp()),
-					new ArrowTypeNode(new ArrayList<>(parTypes), returnType) //TODO keep an eye
+					new ArrowTypeNode(new ArrayList<>(parTypes), returnType)
 			);
 
 			n.setLine(ctx.FUN().getSymbol().getLine());

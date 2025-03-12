@@ -60,7 +60,7 @@ public class TypeRels {
 		return false;
 	}
 
-	//TODO
+
 	public static TypeNode lowestCommonAncestor(TypeNode a, TypeNode b) {
 
 		if ((a instanceof RefTypeNode || a instanceof EmptyTypeNode)
