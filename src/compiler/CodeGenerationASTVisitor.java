@@ -310,7 +310,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
-    public String visitNode(MethodNode n) throws VoidException { //come funNode
+    public String visitNode(MethodNode n) throws VoidException {
         if (print) printNode(n);
         String label = freshMethodLabel();
         n.label = label;
@@ -415,9 +415,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 //l'indirizzo del metodo a cui saltare
                 "push " + n.classEntry.offset, "add", // compute address of "id" declaration
                 "lw", // load value of "id" variable
-
-                //forse cosi? non ho fatto tanto, ho solo copiato queste 2 righe da idnode
-
 
                 "stm", // set $tm to popped value (with the aim of duplicating top of stack)
                 "ltm", // load Access Link (pointer to frame of function "id" declaration)

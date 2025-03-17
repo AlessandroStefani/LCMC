@@ -70,8 +70,8 @@ public class TypeRels {
 			if (a instanceof EmptyTypeNode) return b;
 			if (b instanceof EmptyTypeNode) return a;
 
-			if (isSubtype(a,b)) return new RefTypeNode(((RefTypeNode) a).id);
-			if (isSubtype(b,a)) return new RefTypeNode(((RefTypeNode) b).id);
+			if (isSubtype(a,b)) return a; //TODO era (new RefTypeNode(((RefTypeNode) a).id)) ma a dovrebbe bastare
+			if (isSubtype(b,a)) return b; //TODO vedi sopra
 		}
 
 		//torna int se almeno uno è int, bool altrimenti

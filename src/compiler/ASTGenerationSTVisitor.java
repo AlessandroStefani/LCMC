@@ -246,10 +246,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	}
 
 
-	///
-	///
-	///
-
 	/**
 	 * CLASS
 	 * @param ctx the parse tree
@@ -269,7 +265,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		List<TypeNode> fieldTypes = new ArrayList<>();
 		List<ArrowTypeNode> methodsArrowTypes = new ArrayList<>();
 
-		//il codice è da mettere a posto ma funziona
 		if (superClass!=null) {
 			for (int i = 2; i < ctx.ID().size(); i++){
 				String field = ctx.ID(i).getText();

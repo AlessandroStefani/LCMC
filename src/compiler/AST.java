@@ -357,7 +357,7 @@ public class AST {
     /**
      * valore null
      */
-    public static class EmptyNode extends Node {//OK??
+    public static class EmptyNode extends Node {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
@@ -368,7 +368,7 @@ public class AST {
     /**
      * tipo null
      */
-    public static class EmptyTypeNode extends TypeNode {//OK??
+    public static class EmptyTypeNode extends TypeNode {
 
         @Override
         public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
